@@ -89,8 +89,9 @@ function parse_dtype(descr::AbstractString)
             "(numpy itself needs `allow_pickle=True` to load them), which NPZvibe does not read"))
     elseif kindchar == 'T'
         throw(NPZError(
-            "dtype $(repr(descr)) is numpy's variable-width StringDType, which is not supported; " *
-            "convert the array to a fixed-width `U`/`S` dtype before saving"))
+            "dtype $(repr(descr)) is numpy's variable-width StringDType (NEP 55); numpy saves " *
+            "these as Python pickles (the .npy header says |O), which NPZvibe does not read. " *
+            "Convert to a fixed-width `U`/`S` dtype before saving (e.g. arr.astype(\"U\"))"))
     elseif kindchar == 'g' || kindchar == 'G'
         longdouble_error(descr)
     end

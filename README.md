@@ -91,7 +91,11 @@ These raise an informative `NPZError` rather than reading something wrong:
   format padded to 12 or 16 bytes, which has no Julia counterpart.
 * **`datetime64`/`timedelta64` below nanosecond resolution** (`ps`, `fs`, `as`) and numpy's
   unit-less "generic" datetimes.
-* **numpy 2's variable-width `StringDType`** (`|T`).
+* **numpy 2's variable-width `StringDType`** (`|T`): numpy saves these arrays as
+  Python pickles (the `.npy` header says `|O`), which NPZvibe does not read.
+  See [NEP 55](https://numpy.org/neps/nep-0055-string_dtype.html#serialization).
+  Convert to a fixed-width `U`/`S` dtype before saving (e.g.
+  `arr.astype("U")`).
 
 ## Contributing
 
