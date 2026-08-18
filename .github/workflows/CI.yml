@@ -41,6 +41,6 @@ jobs:
       # The test suite cross-checks every file against real numpy; without it
       # those testsets are skipped rather than failed, so install it explicitly.
       - run: python -m pip install --upgrade numpy
-      - uses: julia-actions/cache@v2
+      - uses: julia-actions/cache@v3
       - uses: julia-actions/julia-buildpkg@v1
       - uses: julia-actions/julia-runtest@v1
