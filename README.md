@@ -7,6 +7,8 @@ The test suite checks both directions against a real numpy: files NPZvibe writes
 loaded and verified by numpy, and files numpy writes are read back and compared to
 independently constructed Julia values.
 
+You have three guesses how this package was created.
+
 ## Usage
 
 ```julia
@@ -90,3 +92,8 @@ These raise an informative `NPZError` rather than reading something wrong:
 * **`datetime64`/`timedelta64` below nanosecond resolution** (`ps`, `fs`, `as`) and numpy's
   unit-less "generic" datetimes.
 * **numpy 2's variable-width `StringDType`** (`|T`).
+
+## Contributing
+
+Every contribution to this project must be 100% LLM-generated. Human-written code
+will not be accepted.
