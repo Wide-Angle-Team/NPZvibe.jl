@@ -56,12 +56,57 @@
             end
 
             @testset "byte order" begin
+                # booleans are single-byte, so endianness is irrelevant, but
+                # the '>' prefix still needs to parse and read correctly
+                @test rd("be_bool.npy") == [true, false, true]
+                @test eltype(rd("be_bool.npy")) === Bool
+
+                # signed integers
+                @test rd("be_i2.npy") == Int16[typemin(Int16), 0, typemax(Int16)]
+                @test eltype(rd("be_i2.npy")) === Int16
                 @test rd("be_i4.npy") == reshape(Int32.(0:5), 3, 2)'
                 @test eltype(rd("be_i4.npy")) === Int32
+                @test rd("be_i8.npy") == Int64[0, -1, Int64(2)^53]
+                @test eltype(rd("be_i8.npy")) === Int64
+
+                # unsigned integers
+                @test rd("be_u2.npy") == UInt16[0, 1, 65535]
+                @test rd("be_u4.npy") == UInt32[0, 1, typemax(UInt32)]
+                @test eltype(rd("be_u4.npy")) === UInt32
+                @test rd("be_u8.npy") == UInt64[0, 1, UInt64(2)^53]
+                @test eltype(rd("be_u8.npy")) === UInt64
+
+                # floats
+                bf2 = rd("be_f2.npy")
+                @test bf2[1] === Float16(1.5)
+                @test bf2[2] === Float16(-0.0) && signbit(bf2[2])
+                @test isnan(bf2[3])
+                @test bf2[4] === Float16(Inf)
+                @test eltype(bf2) === Float16
+                bf4 = rd("be_f4.npy")
+                @test bf4[1] === Float32(1.5)
+                @test bf4[2] === Float32(-0.0) && signbit(bf4[2])
+                @test isnan(bf4[3])
+                @test bf4[4] === Float32(Inf) && bf4[5] === Float32(-Inf)
+                @test eltype(bf4) === Float32
                 bf = rd("be_f8.npy")
                 @test bf[1] === 1.5 && bf[2] === -2.25 && isnan(bf[3])
+                @test eltype(bf) === Float64
+
+                # complex
+                bc8 = rd("be_c8.npy")
+                @test bc8[1] === ComplexF32(1.5, 2.5)
+                @test bc8[2] === ComplexF32(-3, -4)
+                @test eltype(bc8) === ComplexF32
                 @test rd("be_c16.npy") == ComplexF64[1.5+2.5im, -3-4im]
-                @test rd("be_u2.npy") == UInt16[0, 1, 65535]
+
+                # timedelta
+                @test rd("be_m8_s.npy") == [Second(0), Second(90), Second(-1)]
+                @test eltype(rd("be_m8_s.npy")) === Second
+                @test rd("be_m8_D.npy") == [Day(0), Day(5), Day(-3)]
+                @test eltype(rd("be_m8_D.npy")) === Day
+
+                # strings and datetime
                 @test rd("be_str_U3.npy") == ["ab", "cde"]
                 @test rd("be_dt_s.npy") == [DateTime(2020, 1, 2, 3, 4, 5), DateTime(1960, 1, 1)]
             end
@@ -145,6 +190,23 @@
 
                 u = rd("struct_U.npy")
                 @test u == [(i=Int32(1), s="héllo"), (i=Int32(2), s="")]
+            end
+
+            @testset "structured byte order" begin
+                s = rd("struct_all_be.npy")
+                @test eltype(s) === @NamedTuple{a::Int32, b::Float64}
+                @test s[1] === (a=Int32(1), b=1.5)
+                @test s[2].a == -2 && isnan(s[2].b)
+                @test s[3] === (a=Int32(3), b=-0.25)
+            end
+
+            @testset "npz byte order" begin
+                be = rd("stored_be.npz")
+                @test sort(collect(keys(be))) == ["big_i8", "little_f4"]
+                @test be["big_i8"] == Int64[0, -1, Int64(2)^53]
+                @test eltype(be["big_i8"]) === Int64
+                @test be["little_f4"] == Float32[1.5, -2.25]
+                @test eltype(be["little_f4"]) === Float32
             end
 
             @testset "npz archives" begin

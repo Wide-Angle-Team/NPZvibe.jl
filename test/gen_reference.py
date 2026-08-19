@@ -38,12 +38,31 @@ save("empty", np.zeros((0, 3), dtype="f4"))
 save("dim5", np.arange(2 * 3 * 4 * 5 * 6, dtype="<f8").reshape(2, 3, 4, 5, 6))
 
 # --- byte order ---------------------------------------------------------------
+save("be_bool", np.array([True, False, True], dtype=">b1"))
+save("be_i2", np.array([np.iinfo("i2").min, 0, np.iinfo("i2").max], dtype=">i2"))
 save("be_i4", np.arange(6, dtype=">i4").reshape(2, 3))
-save("be_f8", np.array([1.5, -2.25, np.nan], dtype=">f8"))
-save("be_c16", np.array([1.5 + 2.5j, -3 - 4j], dtype=">c16"))
+save("be_i8", np.array([0, -1, 2**53], dtype=">i8"))
 save("be_u2", np.array([0, 1, 65535], dtype=">u2"))
+save("be_u4", np.array([0, 1, np.iinfo("u4").max], dtype=">u4"))
+save("be_u8", np.array([0, 1, 2**53], dtype=">u8"))
+save("be_f2", np.array([1.5, -0.0, np.nan, np.inf], dtype=">f2"))
+save("be_f4", np.array([1.5, -0.0, np.nan, np.inf, -np.inf], dtype=">f4"))
+save("be_f8", np.array([1.5, -2.25, np.nan], dtype=">f8"))
+save("be_c8", np.array([1.5 + 2.5j, -3 - 4j], dtype=">c8"))
+save("be_c16", np.array([1.5 + 2.5j, -3 - 4j], dtype=">c16"))
+save("be_m8_s", np.array([0, 90, -1], dtype=">m8[s]"))
+save("be_m8_D", np.array([0, 5, -3], dtype=">m8[D]"))
 save("be_str_U3", np.array(["ab", "cde"], dtype=">U3"))
 save("be_dt_s", np.array(["2020-01-02T03:04:05", "1960-01-01T00:00:00"], dtype=">M8[s]"))
+
+struct_all_be = np.zeros(3, dtype=[("a", ">i4"), ("b", ">f8")])
+struct_all_be["a"] = [1, -2, 3]
+struct_all_be["b"] = [1.5, np.nan, -0.25]
+save("struct_all_be", struct_all_be)
+
+np.savez(os.path.join(out, "stored_be.npz"),
+         big_i8=np.array([0, -1, 2**53], dtype=">i8"),
+         little_f4=np.array([1.5, -2.25], dtype="<f4"))
 
 # --- strings ------------------------------------------------------------------
 save("str_S5", np.array([b"ab", b"cde", b""], dtype="S5"))
