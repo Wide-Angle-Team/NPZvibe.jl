@@ -1,7 +1,7 @@
 # Large arrays and large strings.  The multi-gigabyte cases need real disk space
 # and time, so they are gated behind NPZVIBE_TEST_LARGE=1.
 
-const TEST_LARGE = get(ENV, "NPZVIBE_TEST_LARGE", "") == "1"
+const TEST_LARGE = get(ENV, "NPZVIBE_TEST_LARGE", "1") == "1"
 
 @testset "large data" begin
     mktempdir() do dir
