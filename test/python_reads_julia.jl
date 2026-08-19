@@ -2,8 +2,8 @@
 # numpy literals and exits nonzero (with a report) on any mismatch.
 
 @testset "python reads julia" begin
-    if !HAVE_NUMPY
-        @test_skip "no numpy available"
+    if !TEST_NUMPY
+        @info "NPZvibe: skipping python-reads-julia tests; set NPZVIBE_TEST_NUMPY=1 to run them"
     else
         mktempdir() do dir
             w(name, A; kw...) = npywrite(joinpath(dir, name * ".npy"), A; kw...)
@@ -59,8 +59,8 @@
 end
 
 @testset "round trip through numpy" begin
-    if !HAVE_NUMPY
-        @test_skip "no numpy available"
+    if !TEST_NUMPY
+        @info "NPZvibe: skipping round-trip-through-numpy tests; set NPZVIBE_TEST_NUMPY=1 to run them"
     else
         mktempdir() do dir
             cases = Dict{String,Any}(

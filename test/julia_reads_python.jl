@@ -2,8 +2,8 @@
 # of NPZvibe's own writer, so a symmetric bug cannot hide.
 
 @testset "julia reads python" begin
-    if !HAVE_NUMPY
-        @test_skip "no numpy available"
+    if !TEST_NUMPY
+        @info "NPZvibe: skipping julia-reads-python tests; set NPZVIBE_TEST_NUMPY=1 to run them"
     else
         mktempdir() do dir
             pyrun(joinpath(PYDIR, "gen_reference.py"), dir)

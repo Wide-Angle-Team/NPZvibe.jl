@@ -15,7 +15,7 @@ const TEST_LARGE = get(ENV, "NPZVIBE_TEST_LARGE", "") == "1"
             @test length(B) == n
             @test B[1] == 1.0 && B[end] == n && B[n÷2] == n ÷ 2
             @test sum(B) == n * (n + 1) / 2
-            if HAVE_NUMPY
+            if TEST_NUMPY
                 out = pyexec("""
 import sys, numpy as np
 a = np.load(sys.argv[1], mmap_mode='r')
@@ -36,7 +36,7 @@ print("ok")
             back = npzread(path)["s"]
             @test back == big
             @test length(back[2]) == 1_000_000
-            if HAVE_NUMPY
+            if TEST_NUMPY
                 out = pyexec("""
 import sys, numpy as np
 a = np.load(sys.argv[1])['s']
@@ -73,7 +73,7 @@ print("ok")
                 @test B[end] == 0xab
                 @test all(B[i] == UInt8(i % 251) for i in 1:100_000_000:n)
 
-                if HAVE_NUMPY
+                if TEST_NUMPY
                     out = pyexec("""
 import sys, zipfile, numpy as np
 path = sys.argv[1]

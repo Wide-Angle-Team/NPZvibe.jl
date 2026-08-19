@@ -124,7 +124,7 @@ end
             @test npzread(dup)["k"] == [2]
         end
 
-        if HAVE_NUMPY
+        if TEST_NUMPY
             @testset "numpy reads our v2.0 header" begin
                 names = ntuple(i -> Symbol("field_", i, "_", repeat("x", 300)), 400)
                 v = NamedTuple{names,NTuple{400,Int8}}(ntuple(i -> Int8(i % 128), 400))
