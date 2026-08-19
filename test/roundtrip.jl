@@ -136,6 +136,18 @@
             arrpath = joinpath(dir, "single.npz")
             npzwrite(arrpath, [1.0, 2.0])
             @test npzread(arrpath) == [1.0, 2.0]
+
+            # a key named "compress" must not collide with the compress= kwarg
+            cpath = joinpath(dir, "compress_key.npz")
+            npzwrite(cpath, Dict("compress" => [1, 2, 3], "a" => [4, 5]))
+            back = npzread(cpath)
+            @test back["compress"] == [1, 2, 3]
+            @test back["a"] == [4, 5]
+            # also round-trip with compress=true to confirm the kwarg stays separate
+            npzwrite(cpath, Dict("compress" => [1, 2, 3], "a" => [4, 5]); compress=true)
+            back = npzread(cpath)
+            @test back["compress"] == [1, 2, 3]
+            @test back["a"] == [4, 5]
         end
 
         @testset "memory-mapped reads" begin
